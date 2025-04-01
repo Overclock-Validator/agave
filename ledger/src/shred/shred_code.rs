@@ -25,7 +25,7 @@ pub enum ShredCode {
 impl ShredCode {
     pub(super) const SIZE_OF_PAYLOAD: usize = PACKET_DATA_SIZE - SIZE_OF_NONCE;
 
-    dispatch!(fn coding_header(&self) -> &CodingShredHeader);
+    dispatch!(pub fn coding_header(&self) -> &CodingShredHeader);
 
     dispatch!(pub(super) fn common_header(&self) -> &ShredCommonHeader);
     dispatch!(pub(super) fn erasure_shard(&self) -> Result<&[u8], Error>);
