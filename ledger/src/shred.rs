@@ -94,7 +94,7 @@ mod payload;
 mod shred_code;
 pub(crate) mod shred_data;
 mod stats;
-mod traits;
+pub mod traits;
 pub mod wire;
 
 // Alias for shred::wire::* for the old code.
@@ -281,10 +281,10 @@ struct DataShredHeader {
 
 /// The coding shred header has FEC information
 #[derive(Clone, Copy, Debug, PartialEq, Eq, SchemaRead, SchemaWrite)]
-struct CodingShredHeader {
-    num_data_shreds: u16,
-    num_coding_shreds: u16,
-    position: u16, // [0..num_coding_shreds)
+pub struct CodingShredHeader {
+    pub num_data_shreds: u16,
+    pub num_coding_shreds: u16,
+    pub position: u16, // [0..num_coding_shreds)
 }
 
 #[derive(Clone, Debug, PartialEq, Eq)]
