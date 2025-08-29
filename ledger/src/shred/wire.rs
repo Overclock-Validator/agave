@@ -65,7 +65,7 @@ pub fn get_common_header_bytes(shred: &[u8]) -> Option<&[u8]> {
 }
 
 #[inline]
-pub(crate) fn get_signature(shred: &[u8]) -> Option<Signature> {
+pub fn get_signature(shred: &[u8]) -> Option<Signature> {
     let bytes = <[u8; 64]>::try_from(shred.get(..64)?).unwrap();
     Some(Signature::from(bytes))
 }
