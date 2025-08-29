@@ -279,7 +279,7 @@ pub enum Shred {
 }
 
 #[derive(Debug, PartialEq, Eq)]
-pub(crate) enum SignedData<'a> {
+pub enum SignedData<'a> {
     Chunk(&'a [u8]), // Chunk of payload past signature.
     MerkleRoot(Hash),
 }
