@@ -63,7 +63,7 @@ pub fn get_common_header_bytes(shred: &[u8]) -> Option<&[u8]> {
 }
 
 #[inline]
-pub(crate) fn get_signature(shred: &[u8]) -> Option<Signature> {
+pub fn get_signature(shred: &[u8]) -> Option<Signature> {
     let bytes = <[u8; 64]>::try_from(shred.get(..64)?).unwrap();
     Some(Signature::from(bytes))
 }
@@ -175,7 +175,7 @@ pub fn get_shred_id(shred: &[u8]) -> Option<ShredId> {
     ))
 }
 
-pub(crate) fn get_signed_data(shred: &[u8]) -> Option<SignedData> {
+pub fn get_signed_data(shred: &[u8]) -> Option<SignedData> {
     let data = match get_shred_variant(shred).ok()? {
         ShredVariant::LegacyCode | ShredVariant::LegacyData => {
             return None;
