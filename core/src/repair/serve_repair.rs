@@ -547,7 +547,7 @@ fn is_well_formed_repair_request(packet: &PacketRef, stats: &mut ServeRepairStat
 }
 
 #[derive(Debug, Deserialize, Serialize, SchemaRead, SchemaWrite)]
-pub(crate) enum RepairResponse {
+pub enum RepairResponse {
     Ping(Ping),
 }
 
