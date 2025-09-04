@@ -273,7 +273,7 @@ fn discard_malformed_repair_requests(
 }
 
 #[derive(Debug, Deserialize, Serialize)]
-pub(crate) enum RepairResponse {
+pub enum RepairResponse {
     Ping(Ping),
 }
 
