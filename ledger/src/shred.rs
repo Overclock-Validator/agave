@@ -261,13 +261,13 @@ enum ShredVariant {
 
 /// A common header that is present in data and code shred headers
 #[derive(Clone, Copy, Debug, PartialEq, Eq, SchemaRead, SchemaWrite)]
-struct ShredCommonHeader {
-    signature: Signature,
-    shred_variant: ShredVariant,
-    slot: Slot,
-    index: u32,
-    version: u16,
-    fec_set_index: u32,
+pub struct ShredCommonHeader {
+    pub signature: Signature,
+    pub shred_variant: ShredVariant,
+    pub slot: Slot,
+    pub index: u32,
+    pub version: u16,
+    pub fec_set_index: u32,
 }
 
 /// The data shred header has parent offset and flags
