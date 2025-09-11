@@ -101,7 +101,7 @@ pub fn get_index(shred: &[u8]) -> Option<u32> {
 }
 
 #[inline]
-pub(super) fn get_version(shred: &[u8]) -> Option<u16> {
+pub fn get_version(shred: &[u8]) -> Option<u16> {
     let bytes = <[u8; 2]>::try_from(shred.get(77..77 + 2)?).unwrap();
     Some(u16::from_le_bytes(bytes))
 }
