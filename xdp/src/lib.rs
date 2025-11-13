@@ -24,6 +24,8 @@ pub mod socket;
 pub mod tx_loop;
 #[cfg(target_os = "linux")]
 pub mod umem;
+#[cfg(target_os = "linux")]
+pub mod dispatcher;
 
 #[cfg(target_os = "linux")]
 pub use program::load_xdp_program;

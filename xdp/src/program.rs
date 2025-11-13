@@ -1,8 +1,8 @@
 #![allow(clippy::arithmetic_side_effects)]
 
 use {
-    crate::device::NetworkDevice,
-    aya::{programs::Xdp, Ebpf, EbpfLoader},
+    crate::{device::NetworkDevice, dispatcher::{EbpfPrograms, XdpDispatcher}},
+    aya::EbpfLoader,
     std::io::{Cursor, Write},
 };
 
@@ -40,21 +40,34 @@ const XDP_PROG: &[u8] = &[
 // the string table
 const STRTAB: &[u8] = b"\0xdp\0.symtab\0.strtab\0agave_xdp\0";
 
-pub fn load_xdp_program(dev: &NetworkDevice) -> Result<Ebpf, Box<dyn std::error::Error>> {
+pub fn load_xdp_program(dev: &NetworkDevice) -> Result<XdpDispatcher, Box<dyn std::error::Error>> {
     let mut loader = EbpfLoader::new();
+
     let broken_frags = dev.driver()? == "i40e";
-    let mut ebpf = if broken_frags {
+    let xdp_elf_bind;
+    let mut program = if broken_frags {
         loader.set_global("AGAVE_XDP_DROP_MULTI_FRAGS", &1u8, true);
-        loader.load(&agave_xdp_ebpf::AGAVE_XDP_EBPF_PROGRAM)
+        EbpfPrograms::new(
+            "agave_validator".to_string(),
+            loader,
+            &agave_xdp_dispatcher_ebpf::AGAVE_XDP_DISPATCHER_EBPF_PROGRAM
+        )
     } else {
-        loader.load(&generate_xdp_elf())
-    }?;
-    let p: &mut Xdp = ebpf.program_mut("agave_xdp").unwrap().try_into().unwrap();
-    p.load()?;
+        xdp_elf_bind = generate_xdp_elf();
+        EbpfPrograms::new(
+            "agave_validator".to_string(),
+            loader,
+            &xdp_elf_bind,
+        )
+    }.set_priority("agave_xdp", 0);
 
-    p.attach_to_if_index(dev.if_index(), aya::programs::xdp::XdpFlags::DRV_MODE)?;
+    let dispatcher = XdpDispatcher::new_with_programs(
+        dev.if_index(),
+        aya::programs::xdp::XdpFlags::DRV_MODE,
+        vec![&mut program]
+    )?;
 
-    Ok(ebpf)
+    Ok(dispatcher)
 }
 
 fn generate_xdp_elf() -> Vec<u8> {
