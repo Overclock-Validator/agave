@@ -49,13 +49,13 @@ pub fn load_xdp_program(dev: &NetworkDevice) -> Result<XdpDispatcher, Box<dyn st
         EbpfPrograms::new(
             "agave_validator".to_string(),
             loader,
-            &agave_xdp_dispatcher_ebpf::AGAVE_XDP_DISPATCHER_EBPF_PROGRAM
+            &agave_xdp_ebpf::AGAVE_XDP_EBPF_PROGRAM
         )
     } else {
         EbpfPrograms::new(
             "agave_validator".to_string(),
             loader,
-            &agave_xdp_dispatcher_ebpf::AGAVE_XDP_DISPATCHER_EBPF_PROGRAM
+            &agave_xdp_ebpf::AGAVE_XDP_EBPF_PROGRAM
         )
     }.set_priority("agave_xdp", 0);
 
