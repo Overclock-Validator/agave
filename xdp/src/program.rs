@@ -52,7 +52,6 @@ pub fn load_xdp_program(dev: &NetworkDevice) -> Result<XdpDispatcher, Box<dyn st
             &agave_xdp_dispatcher_ebpf::AGAVE_XDP_DISPATCHER_EBPF_PROGRAM
         )
     } else {
-        loader.set_global("AGAVE_XDP_DROP_MULTI_FRAGS", &1u8, false);
         EbpfPrograms::new(
             "agave_validator".to_string(),
             loader,
