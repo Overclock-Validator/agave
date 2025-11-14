@@ -168,6 +168,7 @@ impl XdpDispatcher {
         for (i, (attrs, mut ext)) in extensions.into_iter().flatten().enumerate() {
             let ext = ext.borrow_mut();
             let link_id = if !attrs.loaded {
+                println!("loading extension prog{prog}, id {}", attrs.ebpf_id);
                 ext.load(dispatcher_xdp.fd()?.try_clone()?, &format!("prog{prog}"))?;
                 ext.attach()?
             } else {
@@ -240,10 +241,12 @@ impl XdpDispatcher {
         let mut owned_ebpfs = HashMap::new();
         let mut owned_extension_priorities = HashMap::new();
         for bpf in bpfs {
+            println!("loading bpf {}", bpf.ebpf_id);
             for (program, _) in &bpf.programs {
                 bpf.loader.extension(program);
             }
             let ebpf = bpf.loader.load(bpf.bpf_bytes)?;
+            println!("loaded bpf {}", bpf.ebpf_id);
             owned_ebpfs.insert(bpf.ebpf_id.clone(), ebpf);
             for (program, priority) in &bpf.programs {
                 owned_extension_priorities
