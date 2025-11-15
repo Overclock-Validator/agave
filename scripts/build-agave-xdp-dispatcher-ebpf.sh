@@ -20,7 +20,7 @@ fi
 
 rustup component add rust-src --toolchain "$rust_nightly"
 
-cargo +"$rust_nightly" rustc --manifest-path "$REPO_ROOT/xdp-dispatcher-ebpf/Cargo.toml" \
+RUSTFLAGS="-Cdebuginfo=2 -Clink-arg=--btf" cargo +"$rust_nightly" rustc --manifest-path "$REPO_ROOT/xdp-dispatcher-ebpf/Cargo.toml" \
     --target bpfel-unknown-none --release --features ebpf \
     -Z build-std=core
 
