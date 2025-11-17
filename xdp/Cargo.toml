@@ -13,6 +13,8 @@ crossbeam-channel = { workspace = true }
 libc = { workspace = true }
 log = { workspace = true }
 thiserror = { workspace = true }
+sha2 = { workspace = true }
+hex = { workspace = true }
 
 [target.'cfg(target_os = "linux")'.dependencies]
 agave-xdp-ebpf = { workspace = true }

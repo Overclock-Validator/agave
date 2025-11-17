@@ -1,5 +1,6 @@
 use agave_xdp_dispatcher_ebpf::{AGAVE_XDP_DISPATCHER_EBPF_PROGRAM, XdpDispatcherConfig};
 use named_lock::NamedLock;
+use sha2::Digest;
 
 use std::{
     borrow::BorrowMut, collections::{BTreeMap, HashMap}, error::Error, fs::{self}
@@ -35,7 +36,9 @@ pub struct EbpfPrograms<'a> {
 }
 
 impl<'a> EbpfPrograms<'a> {
-    pub fn new(ebpf_id: String, loader: EbpfLoader<'a>, bpf_bytes: &'a [u8]) -> Self {
+    pub fn new(loader: EbpfLoader<'a>, bpf_bytes: &'a [u8]) -> Self {
+        let bpf_hash = sha2::Sha256::digest(bpf_bytes);
+        let ebpf_id = hex::encode(bpf_hash);
         Self {
             ebpf_id,
             loader,
@@ -312,9 +315,7 @@ impl XdpDispatcher {
         for (attrs, ext) in Self::existing_extensions_iter(&current_ext_dir)? {
             if self
                 .owned_extension_priorities
-                .get(&(attrs.ebpf_id.to_owned(), attrs.program_name.to_owned()))
-                .copied()
-                == Some(attrs.priority)
+                .contains_key(&(attrs.ebpf_id.to_owned(), attrs.program_name.to_owned()))
             {
                 continue;
             }

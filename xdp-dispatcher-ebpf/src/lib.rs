@@ -21,14 +21,4 @@ unsafe impl aya::Pod for XdpDispatcherConfig {}
 
 #[cfg(all(target_os = "linux", not(target_arch = "bpf")))]
 #[unsafe(no_mangle)]
-pub static AGAVE_XDP_DISPATCHER_EBPF_PROGRAM: [u8; aya::include_bytes_aligned!(concat!(
-    env!("CARGO_MANIFEST_DIR"),
-    "/agave-xdp-dispatcher-prog"
-))
-.len()] = unsafe {
-    core::ptr::read(
-        aya::include_bytes_aligned!(concat!(env!("CARGO_MANIFEST_DIR"), "/agave-xdp-dispatcher-prog"))
-            .as_ptr()
-            .cast(),
-    )
-};
+pub static AGAVE_XDP_DISPATCHER_EBPF_PROGRAM: &[u8] = aya::include_bytes_aligned!(concat!(env!("CARGO_MANIFEST_DIR"), "/agave-xdp-dispatcher-prog"));

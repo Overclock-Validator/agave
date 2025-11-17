@@ -20,7 +20,7 @@ fi
 
 rustup component add rust-src --toolchain "$rust_nightly"
 
-RUSTFLAGS="-Cdebuginfo=2 -Clink-arg=--btf" cargo +"$rust_nightly" rustc --manifest-path "$REPO_ROOT/xdp-ebpf/Cargo.toml" \
+RUSTFLAGS="-C debuginfo=2 -C link-arg=--btf" cargo +"$rust_nightly" rustc --manifest-path "$REPO_ROOT/xdp-ebpf/Cargo.toml" \
     --target bpfel-unknown-none --release --features agave-unstable-api,ebpf \
     -Z build-std=core
 

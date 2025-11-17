@@ -44,20 +44,14 @@ pub fn load_xdp_program(dev: &NetworkDevice) -> Result<XdpDispatcher, Box<dyn st
     let mut loader = EbpfLoader::new();
 
     let broken_frags = dev.driver()? == "i40e";
-    let mut program = if broken_frags {
+    if broken_frags {
         loader.set_global("AGAVE_XDP_DROP_MULTI_FRAGS", &1u8, true);
-        EbpfPrograms::new(
-            "agave_validator".to_string(),
-            loader,
-            &agave_xdp_ebpf::AGAVE_XDP_EBPF_PROGRAM
-        )
-    } else {
-        EbpfPrograms::new(
-            "agave_validator".to_string(),
-            loader,
-            &agave_xdp_ebpf::AGAVE_XDP_EBPF_PROGRAM
-        )
-    }.set_priority("agave_xdp", 0);
+    }
+
+    let mut program = EbpfPrograms::new(
+        loader,
+        &agave_xdp_ebpf::AGAVE_XDP_EBPF_PROGRAM
+    ).set_priority("agave_xdp", 0);
 
     let dispatcher = XdpDispatcher::new_with_programs(
         dev.if_index(),
