@@ -29,7 +29,7 @@ fn default_proceed_on_mask() -> u32 {
 }
 
 pub struct EbpfPrograms<'a> {
-    ebpf_id: String,
+    pub ebpf_id: String,
     pub loader: EbpfLoader<'a>,
     programs: Vec<(String, u8)>,
     bpf_bytes: &'a [u8],
@@ -244,12 +244,10 @@ impl XdpDispatcher {
         let mut owned_ebpfs = HashMap::new();
         let mut owned_extension_priorities = HashMap::new();
         for bpf in bpfs {
-            println!("loading bpf {}", bpf.ebpf_id);
             for (program, _) in &bpf.programs {
                 bpf.loader.extension(program);
             }
             let ebpf = bpf.loader.load(bpf.bpf_bytes)?;
-            println!("loaded bpf {}", bpf.ebpf_id);
             owned_ebpfs.insert(bpf.ebpf_id.clone(), ebpf);
             for (program, priority) in &bpf.programs {
                 owned_extension_priorities
