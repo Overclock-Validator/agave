@@ -137,6 +137,7 @@ members = [
     "watchtower",
     "wen-restart",
     "xdp",
+    "xdp-dispatcher-ebpf",
     "xdp-ebpf",
     "zk-keygen",
     "zk-token-sdk",
@@ -189,6 +190,7 @@ agave-verified-packet-receiver = { path = "verified-packet-receiver", version = 
 agave-votor = { path = "votor", version = "=3.0.11" }
 agave-xdp = { path = "xdp", version = "=3.0.11" }
 agave-xdp-ebpf = { path = "xdp-ebpf", version = "=3.0.11", features = ["agave-unstable-api"] }
+agave-xdp-dispatcher-ebpf = { path = "xdp-dispatcher-ebpf", version = "=3.0.11" }
 ahash = "0.8.11"
 anyhow = "1.0.99"
 aquamarine = "0.6.0"
@@ -314,6 +316,7 @@ merlin = { version = "3", default-features = false }
 min-max-heap = "1.3.0"
 mockall = "0.11.4"
 modular-bitfield = "0.11.2"
+named-lock = "0.4.1"
 nix = "0.30.1"
 num-bigint = "0.4.6"
 num-derive = "0.4"
@@ -601,6 +604,7 @@ tracing = "0.1"
 trait-set = "0.3.0"
 trees = "0.4.2"
 tungstenite = "0.20.1"
+uuid = { version = "1.18.1", default-features = false }
 unwrap_none = "0.1.2"
 uriparse = "0.6.4"
 url = "2.5.4"
