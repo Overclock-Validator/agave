@@ -286,6 +286,7 @@ pub struct ReplayStageConfig {
     pub snapshot_controller: Option<Arc<SnapshotController>>,
     pub replay_highest_frozen: Arc<ReplayHighestFrozen>,
     pub migration_status: Arc<MigrationStatus>,
+    pub bank_hash_debugger: Option<Arc<crate::bank_hash_debug::BankHashDebugger>>,
 }
 
 pub struct ReplaySenders {
@@ -597,6 +598,7 @@ impl ReplayStage {
             snapshot_controller,
             replay_highest_frozen,
             migration_status,
+            bank_hash_debugger,
         } = config;
 
         let ReplaySenders {
@@ -803,6 +805,7 @@ impl ReplayStage {
                     (!migration_status.is_alpenglow_enabled()).then_some(&mut tbft_structs),
                     migration_status.as_ref(),
                     &votor_event_sender,
+                    bank_hash_debugger.as_deref(),
                 );
                 let did_complete_bank = !new_frozen_slots.is_empty();
                 if migration_status.is_alpenglow_enabled() {
@@ -3352,6 +3355,7 @@ impl ReplayStage {
         mut tbft_structs: Option<&mut TowerBFTStructures>,
         migration_status: &MigrationStatus,
         votor_event_sender: &VotorEventSender,
+        bank_hash_debugger: Option<&crate::bank_hash_debug::BankHashDebugger>,
     ) -> Vec<Slot> {
         // TODO: See if processing of blockstore replay results and bank completion can be made thread safe.
         let mut tx_count = 0;
@@ -3505,6 +3509,17 @@ impl ReplayStage {
                     ("slot", bank_slot, i64),
                     ("hash", bank.hash().to_string(), String),
                 );
+
+                // Bank hash debug protocol: wait for Mithril status and
+                // dump account state on mismatch.
+                if let Some(debugger) = bank_hash_debugger {
+                    if let Err(e) = debugger.process_frozen_bank(bank.slot(), bank) {
+                        warn!(
+                            target: "bank_hash_debug",
+                            "Slot {}: BankHashDebugger error: {:?}", bank.slot(), e
+                        );
+                    }
+                }
 
                 let r_replay_stats = replay_stats.read().unwrap();
                 let replay_progress = bank_progress.replay_progress.clone();
@@ -3716,6 +3731,7 @@ impl ReplayStage {
         tbft_structs: Option<&mut TowerBFTStructures>,
         migration_status: &MigrationStatus,
         votor_event_sender: &VotorEventSender,
+        bank_hash_debugger: Option<&crate::bank_hash_debug::BankHashDebugger>,
     ) -> Vec<Slot> /* completed slots */ {
         let active_bank_slots = bank_forks.read().unwrap().active_bank_slots();
         let num_active_banks = active_bank_slots.len();
@@ -3789,6 +3805,7 @@ impl ReplayStage {
             tbft_structs,
             migration_status,
             votor_event_sender,
+            bank_hash_debugger,
         )
     }
 

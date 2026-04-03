@@ -884,6 +884,22 @@ pub fn execute(
             "snapshot_packager_niceness_adj",
             i8
         ),
+        bank_hash_debug_config: {
+            let enabled = matches.is_present("bank_hash_debug_redis_url");
+            solana_core::bank_hash_debug::BankHashDebugConfig {
+                redis_url: matches
+                    .value_of("bank_hash_debug_redis_url")
+                    .unwrap_or("")
+                    .to_string(),
+                mithril_wait_timeout_ms: value_t!(
+                    matches,
+                    "bank_hash_debug_timeout_ms",
+                    u64
+                )
+                .unwrap_or(30_000),
+                enabled,
+            }
+        },
     };
 
     let vote_account = pubkey_of(matches, "vote_account").unwrap_or_else(|| {
