@@ -18,6 +18,7 @@
 //!
 
 pub mod admin_rpc_post_init;
+pub mod bank_hash_debug;
 pub mod banking_simulation;
 pub mod banking_stage;
 pub mod banking_trace;

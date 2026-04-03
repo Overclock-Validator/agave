@@ -101,6 +101,7 @@ pub struct TvuConfig {
     pub replay_transactions_threads: NonZeroUsize,
     pub shred_sigverify_threads: NonZeroUsize,
     pub xdp_sender: Option<XdpSender>,
+    pub bank_hash_debugger: Option<Arc<crate::bank_hash_debug::BankHashDebugger>>,
 }
 
 impl Default for TvuConfig {
@@ -115,6 +116,7 @@ impl Default for TvuConfig {
             replay_transactions_threads: NonZeroUsize::new(1).expect("1 is non-zero"),
             shred_sigverify_threads: NonZeroUsize::new(1).expect("1 is non-zero"),
             xdp_sender: None,
+            bank_hash_debugger: None,
         }
     }
 }
@@ -348,6 +350,7 @@ impl Tvu {
             prioritization_fee_cache: prioritization_fee_cache.clone(),
             banking_tracer,
             snapshot_controller,
+            bank_hash_debugger: tvu_config.bank_hash_debugger,
         };
 
         let voting_service = VotingService::new(

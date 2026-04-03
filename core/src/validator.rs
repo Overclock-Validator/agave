@@ -382,6 +382,7 @@ pub struct ValidatorConfig {
     pub use_tpu_client_next: bool,
     pub retransmit_xdp: Option<XdpConfig>,
     pub repair_handler_type: RepairHandlerType,
+    pub bank_hash_debug_config: crate::bank_hash_debug::BankHashDebugConfig,
 }
 
 impl ValidatorConfig {
@@ -464,6 +465,7 @@ impl ValidatorConfig {
             use_tpu_client_next: true,
             retransmit_xdp: None,
             repair_handler_type: RepairHandlerType::default(),
+            bank_hash_debug_config: crate::bank_hash_debug::BankHashDebugConfig::default(),
         }
     }
 
@@ -1646,6 +1648,22 @@ impl Validator {
                 replay_transactions_threads: config.replay_transactions_threads,
                 shred_sigverify_threads: config.tvu_shred_sigverify_threads,
                 xdp_sender: xdp_sender.clone(),
+                bank_hash_debugger: if config.bank_hash_debug_config.enabled {
+                    match crate::bank_hash_debug::BankHashDebugger::new(
+                        config.bank_hash_debug_config.clone(),
+                    ) {
+                        Ok(debugger) => {
+                            info!("Bank hash debugger enabled, Redis URL: {}", config.bank_hash_debug_config.redis_url);
+                            Some(Arc::new(debugger))
+                        }
+                        Err(e) => {
+                            warn!("Failed to initialize bank hash debugger: {e}");
+                            None
+                        }
+                    }
+                } else {
+                    None
+                },
             },
             &max_slots,
             block_metadata_notifier,

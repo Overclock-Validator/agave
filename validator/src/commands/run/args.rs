@@ -1322,6 +1322,28 @@ pub fn add_args<'a>(app: App<'a, 'a>, default_args: &'a DefaultArgs) -> App<'a, 
                  set,tpu-client-next is used by default.",
             ),
     )
+    .arg(
+        Arg::with_name("bank_hash_debug_redis_url")
+            .long("bank-hash-debug-redis-url")
+            .value_name("URL")
+            .takes_value(true)
+            .help(
+                "Enables bank hash mismatch debugging. Connects to the given Redis \
+                 instance and synchronizes with a Mithril node after each slot. \
+                 Example: redis://10.0.1.5:6379",
+            ),
+    )
+    .arg(
+        Arg::with_name("bank_hash_debug_timeout_ms")
+            .long("bank-hash-debug-timeout-ms")
+            .value_name("MS")
+            .takes_value(true)
+            .default_value("30000")
+            .help(
+                "Timeout in milliseconds to wait for Mithril status per slot \
+                 (only used when --bank-hash-debug-redis-url is set). Default: 30000",
+            ),
+    )
     .args(&pub_sub_config::args(/*test_validator:*/ false))
     .args(&json_rpc_config::args())
     .args(&rpc_bigtable_config::args())
