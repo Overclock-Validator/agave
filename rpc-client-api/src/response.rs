@@ -3,6 +3,7 @@ pub use solana_rpc_client_types::response::{
     EncodedTransaction, EncodedTransactionWithStatusMeta, FeeCalculator, FeeRateGovernor,
     OptionSerializer, OptionalContext, ParsedAccount, ParsedInstruction, ProcessedSignatureResult,
     ReceivedSignatureResult, Response, Reward, RewardType, Rewards, RpcAccountBalance,
+    RpcAlpenglowRankEntry, RpcAlpenglowRankMap,
     RpcApiVersion, RpcBlockCommitment, RpcBlockProduction, RpcBlockProductionRange, RpcBlockUpdate,
     RpcBlockUpdateError, RpcBlockhash, RpcBlockhashFeeCalculator,
     RpcConfirmedTransactionStatusWithSignature, RpcContactInfo, RpcFeeCalculator,

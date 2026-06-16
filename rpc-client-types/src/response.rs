@@ -394,6 +394,39 @@ pub struct RpcVoteAccountStatus {
     pub delinquent: Vec<RpcVoteAccountInfo>,
 }
 
+/// The Alpenglow BLS rank map for the epoch stakes that a given slot's certificates are
+/// verified against (`epoch_stakes_from_slot`). Validators are listed in BLS rank order, which
+/// is the ordering certificate signer bitmaps index into. Returned by `getAlpenglowRankMap`.
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct RpcAlpenglowRankMap {
+    /// The epoch this slot belongs to. The stake distribution is the one frozen for this epoch
+    /// (effectively the previous epoch's stakes).
+    pub epoch: u64,
+    /// Total stake (lamports) of the epoch's vote accounts, i.e. the certificate threshold
+    /// denominator.
+    pub total_stake: u64,
+    /// Validators in BLS rank order. `entries[rank]` is the validator a signer bitmap bit at
+    /// `rank` refers to.
+    pub entries: Vec<RpcAlpenglowRankEntry>,
+}
+
+/// A single validator entry in [`RpcAlpenglowRankMap`].
+#[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
+#[serde(rename_all = "camelCase")]
+pub struct RpcAlpenglowRankEntry {
+    /// BLS rank (index into the sorted rank map; rank 0 has the highest stake).
+    pub rank: u16,
+    /// Vote account address, base-58 encoded.
+    pub vote_pubkey: String,
+    /// Validator identity, base-58 encoded.
+    pub node_pubkey: String,
+    /// Compressed BLS public key (48 bytes), base-58 encoded.
+    pub bls_pubkey_compressed: String,
+    /// Stake (lamports) for this validator in the epoch's frozen distribution.
+    pub stake: u64,
+}
+
 #[derive(Serialize, Deserialize, Clone, Debug, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 pub struct RpcVoteAccountInfo {

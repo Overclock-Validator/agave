@@ -933,6 +933,34 @@ impl JsonRpcRequestProcessor {
             })
     }
 
+    pub fn get_alpenglow_rank_map(&self, slot: Slot) -> Result<RpcAlpenglowRankMap> {
+        let bank = self.bank(Some(CommitmentConfig::finalized()));
+        let epoch = bank.epoch_schedule().get_epoch(slot);
+        let epoch_stakes = bank.epoch_stakes_from_slot(slot).ok_or_else(|| {
+            Error::invalid_params(format!("no epoch stakes available for slot {slot}"))
+        })?;
+        let rank_map = epoch_stakes.bls_pubkey_to_rank_map();
+        let total_stake = epoch_stakes.total_stake();
+        let entries = (0..rank_map.len())
+            .filter_map(|rank| {
+                let entry = rank_map.get_pubkey_stake_entry(rank)?;
+                Some(RpcAlpenglowRankEntry {
+                    rank: rank as u16,
+                    vote_pubkey: entry.vote_account_pubkey.to_string(),
+                    node_pubkey: entry.node_pubkey.to_string(),
+                    bls_pubkey_compressed: bs58::encode(entry.bls_pubkey.to_bytes_compressed())
+                        .into_string(),
+                    stake: entry.stake.into(),
+                })
+            })
+            .collect();
+        Ok(RpcAlpenglowRankMap {
+            epoch,
+            total_stake,
+            entries,
+        })
+    }
+
     pub fn get_balance(
         &self,
         pubkey: &Pubkey,
@@ -3042,6 +3070,13 @@ pub mod rpc_bank {
         fn get_ag_genesis_cert(&self, meta: Self::Metadata)
         -> Result<Option<WireBlockCertMessage>>;
 
+        #[rpc(meta, name = "getAlpenglowRankMap")]
+        fn get_alpenglow_rank_map(
+            &self,
+            meta: Self::Metadata,
+            slot: Slot,
+        ) -> Result<RpcAlpenglowRankMap>;
+
         #[rpc(meta, name = "getBlockProduction")]
         fn get_block_production(
             &self,
@@ -3123,6 +3158,15 @@ pub mod rpc_bank {
         ) -> Result<Option<WireBlockCertMessage>> {
             debug!("get_ag_genesis_cert rpc request received");
             Ok(meta.get_ag_genesis_cert())
+        }
+
+        fn get_alpenglow_rank_map(
+            &self,
+            meta: Self::Metadata,
+            slot: Slot,
+        ) -> Result<RpcAlpenglowRankMap> {
+            debug!("get_alpenglow_rank_map rpc request received: {slot}");
+            meta.get_alpenglow_rank_map(slot)
         }
 
         fn get_block_production(
