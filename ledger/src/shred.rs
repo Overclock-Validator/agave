@@ -592,6 +592,17 @@ impl Shred {
     }
 }
 
+pub fn recover(
+    shreds: Vec<Shred>,
+    reed_solomon_cache: &ReedSolomonCache,
+) -> Result<impl Iterator<Item = Result<Shred, Error>> + use<>, Error> {
+    let shreds = shreds
+        .into_iter()
+        .map(merkle::Shred::try_from)
+        .collect::<Result<Vec<_>, _>>()?;
+    Ok(merkle::recover(shreds, reed_solomon_cache)?.map(|shred| shred.map(Shred::from)))
+}
+
 impl From<merkle::Shred> for Shred {
     fn from(shred: merkle::Shred) -> Self {
         match shred {
