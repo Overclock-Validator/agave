@@ -69,7 +69,7 @@ pub struct ShredCode {
 }
 
 #[derive(Clone, Debug, Eq, PartialEq)]
-pub(crate) enum Shred {
+pub enum Shred {
     ShredCode(ShredCode),
     ShredData(ShredData),
 }
@@ -666,7 +666,7 @@ fn get_merkle_node(shred: &[u8], offsets: Range<usize>) -> Result<Hash, Error> {
     Ok(hashv(&[MERKLE_HASH_PREFIX_LEAF, node]))
 }
 
-pub(super) fn recover(
+pub fn recover(
     mut shreds: Vec<Shred>,
     reed_solomon_cache: &ReedSolomonCache,
 ) -> Result<impl Iterator<Item = Result<Shred, Error>> + use<>, Error> {
