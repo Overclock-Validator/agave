@@ -83,7 +83,7 @@ type MaxStreamSizeConfig = wincode::config::Configuration<true, MAX_STREAM_SIZE>
 
 #[cfg_attr(feature = "frozen-abi", derive(AbiExample))]
 #[derive(Debug, Deserialize)]
-pub(crate) struct AccountsDbFields<T>(
+pub struct AccountsDbFields<T>(
     Vec<(Slot, SmallVec<[T; 1]>)>,
     u64, // unused, formerly write_version
     Slot,
