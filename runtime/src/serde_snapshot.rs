@@ -502,7 +502,7 @@ where
     Ok((bank_fields, accounts_db_fields))
 }
 
-pub(crate) fn fields_from_stream<R: Read>(
+pub fn fields_from_stream<R: Read>(
     snapshot_stream: &mut BufReader<R>,
 ) -> std::result::Result<
     (
